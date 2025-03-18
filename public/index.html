@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>T3VO RELAY | Secure Offline Vault</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" />
+    <script src="https://cdn.jsdelivr.net/npm/vue@3/dist/vue.global.prod.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              "apple-gray": "#f5f5f7",
+              "apple-dark": "#1d1d1f",
+              "apple-blue": "#0071e3",
+              "apple-blue-hover": "#0077ed",
+              "apple-green": "#5ac8fa",
+              "apple-card": "rgba(255, 255, 255, 0.8)",
+            },
+            fontFamily: {
+              sans: ["Inter", "sans-serif"],
+            },
+            boxShadow: {
+              apple: "0 4px 24px rgba(0, 0, 0, 0.04)",
+              "apple-hover": "0 8px 32px rgba(0, 0, 0, 0.08)",
+            },
+          },
+        },
+      };
+    </script>
+  </head>
+  <body class="bg-apple-gray font-sans text-apple-dark antialiased">
+    <div id="app">
+      <div class="min-h-screen flex flex-col">
+        <main class="flex-grow flex flex-col items-center justify-center px-6 py-12">
+          <div class="text-center max-w-3xl mx-auto mb-12">
+            <h2 class="text-5xl font-bold mb-6">T3VO RELAY</h2>
+            <p class="text-xl text-gray-600 mb-3">Offline Vault for Passwords, Bookmarks & Private Notes.</p>
+            <p class="text-lg text-gray-500 mb-6">All encrypted. Offline first. Works Everywhere. No Server Needed.</p>
+            <a href="https://github.com/t3volabs/relay" target="_blank" class="inline-flex items-center justify-center text-sm text-gray-600 hover:text-apple-blue transition-colors bg-white px-4 py-2 rounded-full shadow-sm">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="currentColor" viewBox="0 0 24 24">
+                <path
+                  d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"
+                />
+              </svg>
+              View on GitHub
+            </a>
+          </div>
+
+          <div class="w-full max-w-md backdrop-blur-sm bg-apple-card rounded-2xl shadow-apple transition-shadow duration-300 hover:shadow-apple-hover p-8 mb-12">
+            <div v-if="loading" class="py-8 flex justify-center">
+              <div class="animate-pulse flex space-x-4">
+                <div class="rounded-full bg-gray-200 h-10 w-10"></div>
+                <div class="flex-1 space-y-4 py-1">
+                  <div class="h-4 bg-gray-200 rounded w-3/4"></div>
+                  <div class="space-y-2">
+                    <div class="h-4 bg-gray-200 rounded"></div>
+                    <div class="h-4 bg-gray-200 rounded w-5/6"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div v-else-if="error" class="py-6 text-center">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 mx-auto text-red-400 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+              </svg>
+              <p class="text-gray-600">{{ error }}</p>
+              <button @click="fetchData" class="mt-4 text-apple-blue hover:text-apple-blue-hover text-sm font-medium">Try Again</button>
+            </div>
+
+            <div v-else class="space-y-6">
+              <div class="flex items-center">
+                <div class="w-12 h-12 rounded-full bg-gradient-to-br from-apple-blue to-apple-green flex items-center justify-center text-white">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
+                  </svg>
+                </div>
+                <div class="ml-4">
+                  <p class="text-sm text-gray-500">Total Entries</p>
+                  <p class="text-2xl font-semibold">{{ totalEntries.toLocaleString() }}</p>
+                </div>
+              </div>
+
+              <div class="flex items-center">
+                <div class="w-12 h-12 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-white">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+                  </svg>
+                </div>
+                <div class="ml-4">
+                  <p class="text-sm text-gray-500">Total Users</p>
+                  <p class="text-2xl font-semibold">{{ totalUsers.toLocaleString() }}</p>
+                </div>
+              </div>
+
+              <div class="flex items-center">
+                <div class="w-12 h-12 rounded-full bg-gradient-to-br from-amber-500 to-orange-500 flex items-center justify-center text-white">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4" />
+                  </svg>
+                </div>
+                <div class="ml-4">
+                  <p class="text-sm text-gray-500">Total Size</p>
+                  <p class="text-2xl font-semibold">{{ formatBytes(totalSize) }}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </main>
+      </div>
+    </div>
+
+    <script>
+      const { createApp } = Vue;
+      createApp({
+        data() {
+          return {
+            loading: true,
+            error: null,
+            totalEntries: 0,
+            totalUsers: 0,
+            totalSize: 0,
+          };
+        },
+        mounted() {
+          this.fetchData();
+        },
+        methods: {
+          fetchData() {
+            this.loading = true;
+            this.error = null;
+
+            fetch("/api/")
+              .then((response) => {
+                if (!response.ok) {
+                  throw new Error("Network response was not ok");
+                }
+                return response.json();
+              })
+              .then((data) => {
+                if (data.status === "ok") {
+                  this.totalEntries = data.totalEntries;
+                  this.totalUsers = data.totalUsers;
+                  this.totalSize = data.totalSize;
+                } else {
+                  this.error = "Failed to load data";
+                }
+              })
+              .catch((err) => {
+                console.error("Error fetching data:", err);
+                this.error = "Error connecting to the server";
+              })
+              .finally(() => {
+                this.loading = false;
+              });
+          },
+          formatBytes(bytes, decimals = 2) {
+            if (bytes === 0) return "0 Bytes";
+
+            const k = 1024;
+            const dm = decimals < 0 ? 0 : decimals;
+            const sizes = ["Bytes", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"];
+
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + " " + sizes[i];
+          },
+        },
+      }).mount("#app");
+    </script>
+  </body>
+</html>
