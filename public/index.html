@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="dark">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -7,129 +7,89 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
       tailwind.config = {
-        theme: {
-          extend: {
-            colors: {
-              apple: {
-                bg: "#f5f5f7",
-                surface: "#ffffff",
-                accent: "#0071e3",
-                "accent-hover": "#0077ed",
-                text: "#1d1d1f",
-                "text-secondary": "#86868b",
-                border: "#d2d2d7"
-              },
-            },
-            fontFamily: {
-              sans: [
-                "-apple-system",
-                "BlinkMacSystemFont",
-                "San Francisco",
-                "Segoe UI",
-                "Roboto",
-                "Helvetica Neue",
-                "sans-serif"
-              ],
-            },
-            boxShadow: {
-              'apple': '0 4px 24px -6px rgba(0, 0, 0, 0.1)',
-              'apple-hover': '0 8px 32px -8px rgba(0, 0, 0, 0.15)',
-            },
-          },
-        },
+        darkMode: "class",
       };
     </script>
     <style>
-      /* Subtle gradient background */
-      .bg-apple-gradient {
-        background: linear-gradient(145deg, #f5f5f7 0%, #e8e8ed 100%);
+      /* Frosted glass effect for dark theme */
+      .dark-glass {
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        background-color: rgba(30, 41, 59, 0.7);
       }
-      
-      /* Frosted glass effect */
-      .frosted-glass {
-        backdrop-filter: blur(20px);
-        -webkit-backdrop-filter: blur(20px);
-        background-color: rgba(255, 255, 255, 0.7);
-      }
-      
+
       /* Subtle animations */
       .hover-scale {
         transition: transform 0.3s ease, box-shadow 0.3s ease;
       }
-      
+
       .hover-scale:hover {
         transform: scale(1.02);
       }
+
+      /* Dark gradient background */
+      .bg-dark-gradient {
+        background: linear-gradient(145deg, #0f172a 0%, #1e293b 100%);
+      }
     </style>
   </head>
-  <body class="bg-apple-gradient text-apple-text font-sans antialiased min-h-screen">
+  <body class="bg-dark-gradient text-gray-100 font-sans antialiased min-h-screen">
     <div id="app">
       <div class="min-h-screen flex flex-col">
         <main class="flex-grow flex flex-col items-center justify-center px-6 py-12 md:py-20">
           <!-- Floating elements in background -->
-          <div class="absolute top-20 left-1/4 w-64 h-64 rounded-full bg-gradient-to-r from-blue-100 to-purple-100 opacity-40 blur-3xl -z-10"></div>
-          <div class="absolute bottom-20 right-1/4 w-80 h-80 rounded-full bg-gradient-to-r from-blue-50 to-sky-100 opacity-40 blur-3xl -z-10"></div>
-          
+          <div class="absolute top-20 left-1/4 w-64 h-64 rounded-full bg-gradient-to-r from-blue-900/20 to-purple-900/20 opacity-30 blur-3xl -z-10"></div>
+          <div class="absolute bottom-20 right-1/4 w-80 h-80 rounded-full bg-gradient-to-r from-blue-900/20 to-sky-900/20 opacity-30 blur-3xl -z-10"></div>
+
           <div class="text-center max-w-3xl mx-auto mb-12 space-y-6">
-            <h2 class="text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-apple-accent to-blue-500 bg-clip-text text-transparent tracking-tight">
-              T3VO RELAY
-            </h2>
-            <p class="text-xl text-apple-text font-medium leading-relaxed mb-2">
-              Offline Vault for Passwords, Bookmarks & Private Notes.
-            </p>
-            <p class="text-lg text-apple-text-secondary mb-8 max-w-2xl mx-auto">
-              All encrypted. Offline first. Works Everywhere. No Server Needed.
-            </p>
+            <h2 class="text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent tracking-tight">T3VO RELAY</h2>
+            <p class="text-xl text-gray-100 font-medium leading-relaxed mb-2">Offline Vault for Passwords, Bookmarks & Private Notes.</p>
 
             <!-- Relay URL Display -->
-            <div class="frosted-glass p-6 rounded-2xl shadow-apple hover-scale mb-8 border border-apple-border/30">
-              <p class="text-sm text-apple-text-secondary mb-1">Relay URL</p>
-              <p class="text-lg font-semibold text-apple-accent" id="relay-url"></p>
+            <div class="dark-glass p-6 rounded-2xl shadow-lg hover-scale mb-8 border border-slate-700/50">
+              <p class="text-sm text-gray-400 mb-1">Relay URL</p>
+              <p class="text-lg font-semibold text-blue-400" id="relay-url"></p>
             </div>
 
             <!-- Server Status -->
-            <div class="frosted-glass p-8 rounded-3xl shadow-apple hover-scale border border-apple-border/30">
-              <h3 class="text-xl font-semibold text-apple-text mb-6">Server Status</h3>
-              
+            <div class="dark-glass p-8 rounded-3xl shadow-lg hover-scale border border-slate-700/50">
+              <h3 class="text-xl font-semibold text-gray-100 mb-6">Server Status</h3>
+
               <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-left">
                 <div class="space-y-1">
-                  <p class="text-apple-text-secondary text-sm">Records</p>
+                  <p class="text-gray-400 text-sm">Records</p>
                   <p class="text-xl font-medium" id="records">-</p>
                 </div>
-                
+
                 <div class="space-y-1">
-                  <p class="text-apple-text-secondary text-sm">Users</p>
+                  <p class="text-gray-400 text-sm">Users</p>
                   <p class="text-xl font-medium" id="users">-</p>
                 </div>
-                
+
                 <div class="space-y-1">
-                  <p class="text-apple-text-secondary text-sm">Data Size</p>
+                  <p class="text-gray-400 text-sm">Data Size</p>
                   <p class="text-xl font-medium" id="data-size">-</p>
                 </div>
-                
+
                 <div class="space-y-1">
-                  <p class="text-apple-text-secondary text-sm">Retention Days</p>
+                  <p class="text-gray-400 text-sm">Retention Days</p>
                   <p class="text-xl font-medium" id="retention">-</p>
                 </div>
-                
+
                 <div class="space-y-1 md:col-span-2">
-                  <p class="text-apple-text-secondary text-sm">Last Updated</p>
+                  <p class="text-gray-400 text-sm">Last Updated</p>
                   <p class="text-xl font-medium" id="last-updated">-</p>
                 </div>
-                
+
                 <div class="space-y-1 md:col-span-2">
-                  <p class="text-apple-text-secondary text-sm">Server Time</p>
+                  <p class="text-gray-400 text-sm">Server Time</p>
                   <p class="text-xl font-medium" id="server-time">-</p>
                 </div>
               </div>
             </div>
 
             <!-- GitHub Link -->
-            <a
-              href="https://github.com/t3volabs/t3vo-relay"
-              target="_blank"
-              class="inline-flex items-center justify-center text-sm text-white transition-all bg-apple-accent hover:bg-apple-accent-hover px-6 py-3 rounded-full shadow-apple hover:shadow-apple-hover duration-300 mt-8 font-medium"
-            >
+            <a href="https://github.com/t3volabs/t3vo-relay" target="_blank" class="inline-flex items-center justify-center text-sm text-white transition-all bg-blue-600 hover:bg-blue-700 px-6 py-3 rounded-full shadow-lg hover:shadow-xl duration-300 mt-8 font-medium">
               <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="currentColor" viewBox="0 0 24 24">
                 <path
                   d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"
@@ -145,16 +105,16 @@
     <script>
       // Function to convert bytes to human readable format
       function formatBytes(bytes, decimals = 2) {
-        if (bytes === 0) return '0 Bytes';
-        if (!bytes) return '-';
-        
+        if (bytes === 0) return "0 Bytes";
+        if (!bytes) return "-";
+
         const k = 1024;
         const dm = decimals < 0 ? 0 : decimals;
-        const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
-        
+        const sizes = ["Bytes", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"];
+
         const i = Math.floor(Math.log(bytes) / Math.log(k));
-        
-        return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + " " + sizes[i];
       }
 
       document.addEventListener("DOMContentLoaded", async () => {
@@ -179,4 +139,3 @@
     </script>
   </body>
 </html>
-
