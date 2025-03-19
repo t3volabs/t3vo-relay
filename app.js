@@ -47,21 +47,30 @@ app.use((req, res, next) => {
 
 app.use(express.json({ limit: "10mb" }));
 
-app.get("/api/", (req, res) => {
-  const totalEntries = db.prepare("SELECT COUNT(*) AS count FROM objects").get().count;
-  const totalUsers = db.prepare("SELECT COUNT(DISTINCT userId) AS count FROM objects").get().count;
-  const totalSize = db.prepare("SELECT SUM(LENGTH(entry)) AS size FROM objects").get().size;
+app.get("/server/", (req, res) => {
+  try {
+    const totalRecords = db.prepare("SELECT COUNT(*) AS count FROM objects").get().count;
+    const uniqueUsers = db.prepare("SELECT COUNT(DISTINCT userId) AS count FROM objects").get().count;
+    const totalDataSize = db.prepare("SELECT COALESCE(SUM(LENGTH(entry)), 0) AS size FROM objects").get().size || 0;
+    const lastEntry = db.prepare("SELECT created_at FROM objects ORDER BY created_at DESC LIMIT 1").get();
+    const lastUpdatedAt = lastEntry ? new Date(lastEntry.created_at).toISOString() : null;
 
-  res.json({
-    status: "ok",
-    totalEntries,
-    totalUsers,
-    totalSize,
-    dataStorage: dayx,
-  });
+    res.json({
+      status: "ok",
+      records: totalRecords,
+      users: uniqueUsers,
+      dataSizeBytes: totalDataSize,
+      retentionDays: dayx,
+      lastUpdatedAt,
+      serverTime: new Date().toISOString(),
+    });
+  } catch (err) {
+    console.error("Error fetching server status:", err);
+    res.status(500).json({ status: "error", message: "Failed to retrieve server stats" });
+  }
 });
 
-app.post("/api/save/:userId", (req, res) => {
+app.post("/save/:userId", (req, res) => {
   try {
     const { userId } = req.params;
     const hashedUserId = hashUserId(userId);
@@ -83,7 +92,7 @@ app.post("/api/save/:userId", (req, res) => {
   }
 });
 
-app.get("/api/fetch/:userId/:page", (req, res) => {
+app.get("/fetch/:userId/:page", (req, res) => {
   try {
     const { userId } = req.params;
     const page = parseInt(req.params.page, 10) || 1; // Convert to integer, default to 1 if invalid
